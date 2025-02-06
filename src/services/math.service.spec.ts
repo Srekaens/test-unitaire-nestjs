@@ -1,18 +1,35 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MathService } from './math.service';
 import { Calculator } from '@utils/calculator';
 
 describe('MathService', () => {
-  it('devrait utiliser le mock de Calculator', () => {
-    // Mock de Calculator
-    const mockCalculator = {
-      add: vi.fn().mockReturnValue(42)
+  let mathService: MathService;
+  let mockCalculator: { 
+    add: ReturnType<typeof vi.fn>;
+    subtract: ReturnType<typeof vi.fn>;
+  };
+
+  beforeEach(() => {
+    mockCalculator = {
+      add: vi.fn(),
+      subtract: vi.fn()
     };
 
-    const mathService = new MathService(mockCalculator as Calculator);
-    const result = mathService.addNumbers(2, 3);
+    mathService = new MathService(mockCalculator as Calculator);
+  });
 
-    expect(result).toBe(42);
-    expect(mockCalculator.add).toHaveBeenCalledWith(2, 3);
+  describe('addNumbers', () => {
+    it('devrait appeler calculator.add avec les bons paramètres', () => {
+      // Arrange
+      mockCalculator.add.mockReturnValue(42);
+
+      // Act
+      const result = mathService.addNumbers(2, 3);
+
+      // Assert
+      expect(result).toBe(42);
+      expect(mockCalculator.add).toHaveBeenCalledWith(2, 3);
+      expect(mockCalculator.add).toHaveBeenCalledTimes(1);
+    });
   });
 }); 
